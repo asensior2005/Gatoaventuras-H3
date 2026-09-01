@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*.class
+*.env
+venv/
+.venv/
+
+# Large binaries & cache
+*.mp4
+cached_videos/
+exports/
+*.exe
+cloudflared.exe
+video_cache.json

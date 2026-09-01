@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GatoAventuras H3 - Cine Mágico Infantil</title>
+    <link rel="stylesheet" href="/static/styles.css?v=55">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="pastel-body" onclick="enableAudioOnUserGesture()">
+    <!-- Floating Paws & Pastel Bubbles Canvas -->
+    <canvas id="pastelPawsCanvas"></canvas>
+
+    <div class="app-container" id="appContainer">
+        <!-- Top Pastel Header -->
+        <header class="pastel-header">
+            <div class="header-brand" onclick="showHubView()">
+                <div class="brand-paw-icon">🐱</div>
+                <div class="brand-titles">
+                    <h1>Mundo Mágico <span class="badge-cat">GATITOS H3</span></h1>
+                    <p class="brand-sub" id="headerSubtitle">🐾 Elige tu aventura favorita</p>
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <div class="fish-token-pill" id="fishTokenPill" onclick="promptJurorCode()" title="Tus pescaditos mágicos gratuitos (o pulsa para introducir clave de jurado)">
+                    <span class="fish-icon">🐟</span>
+                    <span id="fishTokenLabel">5/5 Pescaditos</span>
+                </div>
+                <button class="pastel-btn btn-back-hub" id="btnBackToHub" onclick="showHubView()" style="display: none;">
+                    <span>🐾 Menú</span>
+                </button>
+                <button class="pastel-btn btn-download-movie" id="btnExportMovie" onclick="exportFullMovie()" style="display: none;">
+                    <span>📥 Guardar Película</span>
+                </button>
+                <button class="pastel-btn" id="btnFullscreen" onclick="toggleFullscreen()">
+                    <span id="fsLabel">⛶ Pantalla Completa</span>
+                </button>
+                <button class="pastel-btn btn-sound-toggle" id="btnSoundToggle" onclick="toggleSoundSFX()" title="Efectos de sonido">
+                    <span id="soundIcon">🔔 Sonidos ON</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Cute Toast Alert Banner -->
+        <div class="pastel-toast" id="statusBanner">
+            <span class="toast-paw" id="statusIcon">✨</span>
+            <span class="toast-text" id="statusMsg">¡Bienvenido a la aventura de gatitos!</span>
+        </div>
+
+        <!-- ==========================================
+             VIEW 1: WORLDS HUB (Main Menu Cards)
+             ========================================== -->
+        <section class="hub-view" id="hubView">
+            <div class="hub-hero">
+                <div class="hero-cute-badge">🐾 CINE INTERACTIVO INFANTIL 🐾</div>
+                <h2>¿QUÉ AVENTURA VIVIMOS HOY?</h2>
+                <p>¡Toca el mundo que más te guste, habla por el micrófono y crea tu propia película de dibujos mágicos!</p>
+            </div>
+
+            <!-- Official Curated Worlds Grid -->
+            <div class="pastel-worlds-grid" id="worldsGrid">
+                <!-- Dynamically loaded -->
+            </div>
+
+            <!-- User's Personal Custom Worlds Section (Visible only to the creator) -->
+            <div class="my-custom-worlds-section" id="myCustomWorldsSection" style="display: none;">
+                <div class="custom-section-title">
+                    <span class="custom-sec-icon">🌟</span>
+                    <h3>MIS MUNDOS PERSONALIZADOS</h3>
+                </div>
+                <div class="pastel-worlds-grid" id="myCustomWorldsGrid">
+                    <!-- Populated from localStorage -->
+                </div>
+            </div>
+
+            <!-- Custom World Creator (Cozy Box) -->
+            <div class="custom-pastel-box">
+                <div class="custom-pastel-header">
+                    <span class="custom-paw-big">🎨</span>
+                    <div>
+                        <h3>¡INVENTA UN MUNDO NUEVO PARA EL GATITO!</h3>
+                        <p>Escribe qué quieres que haya en el mundo y la magia de H3 lo dibujará para ti.</p>
+                    </div>
+                </div>
+                <div class="custom-pastel-form">
+                    <input type="text" id="customWorldTitle" placeholder="Nombre del mundo (ej. El País de las Chuches)...">
+                    <input type="text" id="customWorldTheme" placeholder="¿Qué cosas divertidas hay en este mundo?...">
+                    <button class="btn-create-pastel" onclick="createCustomWorld()">
+                        <span>✨ ¡CREAR MUNDO!</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             VIEW 2: CINEMA THEATER (Pastel Player)
+             ========================================== -->
+        <main class="theater-stage" id="theaterView" style="display: none;">
+            <div class="player-column">
+                <!-- Scene Bar -->
+                <div class="pastel-scene-bar">
+                    <div class="scene-pill-cute">
+                        <span class="scene-paw-tag">🐾</span>
+                        <span class="chapter-tag" id="chapterTag">ESCENA 1</span>
+                    </div>
+                    <!-- Pastel Atmosphere Buttons -->
+                    <div class="pastel-mood-group">
+                        <button class="mood-cute-btn active" data-mood="golden_hour" onclick="setMood('golden_hour')">☀️ Soleado</button>
+                        <button class="mood-cute-btn" data-mood="mystic_night" onclick="setMood('mystic_night')">🌙 Noche Mágica</button>
+                        <button class="mood-cute-btn" data-mood="peaceful_dawn" onclick="setMood('peaceful_dawn')">🌸 Amanecer Rosa</button>
+                        <button class="mood-cute-btn" data-mood="epic_storm" onclick="setMood('epic_storm')">🌧️ Lluvia de Pompas</button>
+                    </div>
+                </div>
+
+                <!-- Video Frame with Cute Rounded Corners -->
+                <div class="pastel-video-wrap" id="videoContainer">
+                    <button class="video-direct-fs-btn" onclick="toggleFullscreen()" title="Pantalla Completa">⛶</button>
+                    <video id="mainVideo" autoplay loop playsinline muted controls></video>
+
+                    <!-- Unmute Bubble Prompt -->
+                    <div class="unmute-bubble" id="unmuteBanner" onclick="unmuteVideo()">
+                        <span>🔊 Toca aquí para activar el sonido</span>
+                    </div>
+
+                    <!-- Pastel Loading Overlay -->
+                    <div class="video-overlay" id="videoOverlay">
+                        <div class="cute-loader-box">
+                            <div class="cat-loader-bounce">🐱🐾</div>
+                            <span class="loader-title" id="overlayTitle">¡DIBUJANDO LA SIGUIENTE ESCENA!</span>
+                            <span class="loader-timer" id="genTimer">0.0s</span>
+                            <span class="loader-sub" id="overlaySub">Creando un momento mágico con gatitos...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Story Subtitles Box (Cleanly positioned below video for perfect mobile readability) -->
+                <div class="story-subtitle-box" id="narrativeBanner">
+                    <span class="story-icon" id="currentWorldIcon">🧶</span>
+                    <p id="narrativeText">Cargando cuento...</p>
+                </div>
+
+                <!-- Bento Grid: 3 Suggested Choices (Fluffy Pillow Buttons) -->
+                <section class="pastel-controls-deck">
+                    <div class="deck-title-row">
+                        <span class="deck-title">🐾 ¿QUÉ DEBERÍA HACER EL GATITO AHORA?</span>
+                        <span class="deck-sub">Toca una opción o pulsa teclas [ 1 ] [ 2 ] [ 3 ]</span>
+                    </div>
+
+                    <div class="bento-cute-grid" id="choicesGrid">
+                        <!-- Bento Cards populated dynamically -->
+                    </div>
+
+                    <!-- Big Fluffy Voice Button with Ears -->
+                    <div class="voice-hero-zone">
+                        <button class="btn-paw-voice" id="btnMic" onclick="toggleVoice()" title="¡Pulsa y habla para mandar al gatito!">
+                            <div class="paw-ears-left"></div>
+                            <div class="paw-ears-right"></div>
+                            <div class="voice-wave-ring r1"></div>
+                            <div class="voice-wave-ring r2"></div>
+                            <span class="voice-mic-paw">🎙️</span>
+                            <span class="voice-text-main" id="micLabel">¡HABLA POR EL MICRO!</span>
+                        </button>
+                        <span class="voice-hint-text">Di cualquier locura divertida y el juego la dibujará en el vídeo ✨</span>
+
+                        <!-- Friendly Text Box -->
+                        <div class="pastel-text-bar">
+                            <input type="text" id="userInput" placeholder="O escribe aquí qué quieres que haga el gatito..." autocomplete="off">
+                            <button class="btn-send-cute" id="btnSend" onclick="handleSendClick()">
+                                <span>🐾 ¡HACERLO!</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Film Reel Sidebar (Sweet Scrapbook Style) -->
+            <aside class="pastel-sidebar">
+                <div class="sidebar-top">
+                    <div class="sidebar-brand-mini">
+                        <span class="scrap-icon">🎞️</span>
+                        <h3>ÁLBUM DE ESCENAS</h3>
+                    </div>
+                    <span class="badge-scenes-count" id="reelCount">1 Escena</span>
+                </div>
+                
+                <div class="scrapbook-list" id="reelTimeline">
+                    <!-- Film clips dynamically added here -->
+                </div>
+
+                <div class="sidebar-bottom">
+                    <button class="btn-download-full-cute" onclick="exportFullMovie()">
+                        <span>📥 DESCARGAR MI PELÍCULA COMPLETA</span>
+                    </button>
+                    <button class="btn-restart-cute" onclick="restartStory()">
+                        <span>🔄 Empezar de Nuevo</span>
+                    </button>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script src="/static/app.js?v=55"></script>
+</body>
+</html>
