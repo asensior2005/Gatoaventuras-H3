@@ -23,7 +23,6 @@ from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 import httpx
 
-os.environ["FAL_KEY"] = "8971ba41-139e-472a-81fc-10377cd85221:c34cc81ecaa3268de4c63db20d2aaed2"
 
 try:
     import fal_client
